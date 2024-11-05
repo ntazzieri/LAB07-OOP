@@ -52,7 +52,11 @@ public class IterableWithPolicyImpl<T> implements IterableWithPolicy<T> {
          */
         @Override
         public boolean hasNext() {
-            return this.currentElement < array.length;
+            int tmpCurrentElem = this.currentElement;
+            while(tmpCurrentElem < array.length && !filter.test(array[tmpCurrentElem])) {
+                tmpCurrentElem++;
+            }
+            return tmpCurrentElem < array.length;
         }
 
         /**
@@ -63,7 +67,9 @@ public class IterableWithPolicyImpl<T> implements IterableWithPolicy<T> {
             while(hasNext() && !filter.test(array[currentElement])) {
                 currentElement++;
             }
-            return array[currentElement++];
+            final T retValue = array[currentElement];
+            currentElement++;
+            return retValue;
         }
 
     }
