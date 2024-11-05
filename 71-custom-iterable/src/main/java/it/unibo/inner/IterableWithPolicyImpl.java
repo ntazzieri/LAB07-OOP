@@ -71,7 +71,5 @@ public class IterableWithPolicyImpl<T> implements IterableWithPolicy<T> {
             currentElement++;
             return retValue;
         }
-
     }
-
 }
