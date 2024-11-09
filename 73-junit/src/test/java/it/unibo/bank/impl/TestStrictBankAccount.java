@@ -5,13 +5,17 @@ import it.unibo.bank.api.BankAccount;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+//import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.fail;
+
 
 /**
  * Test class for the {@link StrictBankAccount} class.
  */
 class TestStrictBankAccount {
 
+    private static final int AMOUNT = 100;
     // Create a new AccountHolder and a StrictBankAccount for it each time tests are executed.
     private AccountHolder mRossi;
     private BankAccount bankAccount;
@@ -21,7 +25,8 @@ class TestStrictBankAccount {
      */
     @BeforeEach
     public void setUp() {
-        fail("To be implemented");
+        this.mRossi = new AccountHolder("Mario", "Rossi", 1);
+        this.bankAccount = new StrictBankAccount(mRossi, 0.0);
     }
 
     /**
@@ -29,7 +34,9 @@ class TestStrictBankAccount {
      */
     @Test
     public void testInitialization() {
-        fail("To be implemented");
+        assertEquals(0.0, bankAccount.getBalance());
+        assertEquals(0, bankAccount.getTransactionsCount());
+        assertEquals(mRossi, bankAccount.getAccountHolder());
     }
 
     /**
@@ -37,7 +44,13 @@ class TestStrictBankAccount {
      */
     @Test
     public void testManagementFees() {
-        fail("To be implemented");
+        final int transactionBeforeDeposit = bankAccount.getTransactionsCount();
+        bankAccount.deposit(mRossi.getUserID(), AMOUNT);
+        assertEquals(transactionBeforeDeposit + 1, bankAccount.getTransactionsCount());
+        assertEquals(AMOUNT, bankAccount.getBalance());
+        bankAccount.chargeManagementFees(mRossi.getUserID());
+        assertEquals(AMOUNT - (StrictBankAccount.MANAGEMENT_FEE + (transactionBeforeDeposit + 1) * StrictBankAccount.TRANSACTION_FEE), bankAccount.getBalance());
+        assertEquals(0, bankAccount.getTransactionsCount());
     }
 
     /**
@@ -45,7 +58,15 @@ class TestStrictBankAccount {
      */
     @Test
     public void testNegativeWithdraw() {
-        fail("To be implemented");
+        final double amountBeforeWithdraw = bankAccount.getBalance();
+        final int transactionsBeforeWithdraw = bankAccount.getTransactionsCount();
+        try {
+            bankAccount.withdraw(mRossi.getUserID(), -AMOUNT);
+            fail("Withdrawing a negative amount is possible");
+        } catch (IllegalArgumentException e) {
+            assertEquals(amountBeforeWithdraw, bankAccount.getBalance());
+            assertEquals(transactionsBeforeWithdraw, bankAccount.getTransactionsCount());
+        }
     }
 
     /**
@@ -53,6 +74,14 @@ class TestStrictBankAccount {
      */
     @Test
     public void testWithdrawingTooMuch() {
-        fail("To be implemented");
+        final double amountBeforeWithdraw = bankAccount.getBalance();
+        final int transactionsBeforeWithdraw = bankAccount.getTransactionsCount();
+        try {
+            bankAccount.withdraw(mRossi.getUserID(), amountBeforeWithdraw - (2 * amountBeforeWithdraw));
+            fail("Withdrawing more money than it is in the account is possible");
+        } catch (IllegalArgumentException e) {
+            assertEquals(amountBeforeWithdraw, bankAccount.getBalance());
+            assertEquals(transactionsBeforeWithdraw, bankAccount.getTransactionsCount());
+        }
     }
 }
