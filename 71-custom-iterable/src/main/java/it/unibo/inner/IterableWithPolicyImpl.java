@@ -5,11 +5,18 @@ import java.util.Iterator;
 import it.unibo.inner.api.IterableWithPolicy;
 import it.unibo.inner.api.Predicate;
 
+/**
+ *  Implementation of {@link IterableWithPolicy<T>}
+ */
 public class IterableWithPolicyImpl<T> implements IterableWithPolicy<T> {
     
     private final T[] array;
     private Predicate<T> filter;
 
+    /**
+     * It sets an always true predicate
+     * @param array to iterate
+     */
     public IterableWithPolicyImpl(final T[] array) {
         this(array, new Predicate<T>() {
             public boolean test(final T elem) {
@@ -17,7 +24,11 @@ public class IterableWithPolicyImpl<T> implements IterableWithPolicy<T> {
             }
         });
     }
-
+    
+    /**
+     * @param array to iterate
+     * @param predicate filter predicate
+     */
     public IterableWithPolicyImpl(final T[] array, final Predicate<T> predicate) {
         this.array = array;
         this.filter = predicate;
@@ -39,6 +50,9 @@ public class IterableWithPolicyImpl<T> implements IterableWithPolicy<T> {
         this.filter = filter;
     }
 
+    /**
+     * An iterator with the policy declared in {@link IterableWithPolicy<T>}
+     */
     public class IteratorWithPolicy implements Iterator<T> {
 
         private int currentElement;
